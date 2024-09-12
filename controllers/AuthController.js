@@ -56,14 +56,12 @@ class AuthController {
             profile: findUser.profile,
           };
           const token = jwt.sign(payloadData, process.env.JWT_SECRET, {
-            expiresIn: "30s",
+            expiresIn: "365d",
           });
-          return res
-            .status(200)
-            .json({
-              message: "Successfully Login",
-              access_token: `Bearer ${token}`,
-            });
+          return res.status(200).json({
+            message: "Successfully Login",
+            access_token: `Bearer ${token}`,
+          });
         } else {
           return res.json({ errors: { password: "Password is incorrect!" } });
         }
