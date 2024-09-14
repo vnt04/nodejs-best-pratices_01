@@ -13,6 +13,7 @@ class ProfileController {
 
   static async update(req, res) {
     const { id } = req.params;
+
     try {
       if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).json({ message: "Profile image is required" });
@@ -20,7 +21,6 @@ class ProfileController {
 
       const profile = req.files.avatar;
       const message = imageValidator(profile?.size, profile?.mimetype);
-
       if (message !== null) {
         return res.status(400).json({ errors: { profile: message } });
       }
