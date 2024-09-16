@@ -94,7 +94,29 @@ class NewsController {
     }
   }
   static async update(req, res) {}
-  static async show(req, res) {}
+  static async show(req, res) {
+    const { id } = req.params;
+    try {
+      const news = await prisma.news.findUnique({
+        where: {
+          id: Number(id),
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              profile: true,
+            },
+          },
+        },
+      });
+      const newsTransform = news? NewsApiTransform.transform(news): null;
+      return res.json({ status: 200, news:newsTransform });
+    } catch (error) {
+      return res.json({ status: 500, message: "Something went wrong!" });
+    }
+  }
   static async destroy(req, res) {}
 }
 
