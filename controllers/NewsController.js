@@ -4,6 +4,7 @@ import { deleteImage, imageValidator, uploadImage } from "../utils/helper.js";
 import prisma from "../DB/database.config.js";
 import NewsApiTransform from "../dataTransform/newsApiTransform.js";
 
+
 class NewsController {
   static async index(req, res) {
     const page = Number(req.query.page) || 1;
