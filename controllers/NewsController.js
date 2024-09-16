@@ -6,7 +6,20 @@ import NewsApiTransform from "../dataTransform/newsApiTransform.js";
 
 class NewsController {
   static async index(req, res) {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+
+    if (page <= 0) {
+      page = 1;
+    }
+    if (limit <= 0 || limit >= 100) {
+      limit = 10;
+    }
+
+    const skip = (page - 1) * limit;
     const data = await prisma.news.findMany({
+      take: limit,
+      skip: skip,
       include: {
         user: {
           select: {
@@ -18,10 +31,21 @@ class NewsController {
       },
     });
 
+    const totalNews = prisma.news.count();
+    const totalPages = Math.ceil(totalNews / limit);
+
     const newsTransform = data?.map((item) => {
       return NewsApiTransform.transform(item);
     });
-    return res.json({ status: 200, news: newsTransform });
+    return res.json({
+      status: 200,
+      news: newsTransform,
+      metadata: {
+        totalPages,
+        currentPage: page,
+        currentLimit: limit,
+      },
+    });
   }
 
   static async store(req, res) {
